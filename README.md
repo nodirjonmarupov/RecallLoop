@@ -20,3 +20,12 @@ RecallLoop is a learning and spaced-repetition system that helps users review le
 ## Project Status
 
 Under active development.
+
+ <!-- Backend qurish tartibi
+1. Database design — jadvallar va ularning bog‘lanishlarini belgilash.
+2. PostgreSQL + Docker — bazani ishga tushirish.
+3. SQLAlchemy — Python va PostgreSQL orasidagi bog‘lanish.
+4. Topic CRUD API — mavzu qo‘shish, ko‘rish, o‘zgartirish, o‘chirish.
+5. Review system — takrorlash sanalarini bazaga saqlash.
+6. Completion API — «Takrorladim» tugmasi bosilganda completed qilish.
+7. Telegram bot — eslatmalarni yuborish. -->
