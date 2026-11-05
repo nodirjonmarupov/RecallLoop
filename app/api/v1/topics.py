@@ -1,5 +1,7 @@
 from datetime import date
 from typing import Annotated
+from uuid import UUID
+from fastapi import HTTPException
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
@@ -45,3 +47,27 @@ async def get_my_topics(
     topics = result.scalars().all()
 
     return topics
+
+
+@router.get("/{topic_id}",response_model=TopicResponse)
+async def get_topic_id(
+    topic_id:UUID,
+    db:Annotated[AsyncSession,Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    result = await db.execute(
+        select(Topic).where(
+            Topic.id == topic_id,
+            Topic.user_id == current_user.id,
+        )
+    )
+
+    topic = result.scalar_one_or_none()
+
+    if topic is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Topic not found",
+        )
+    return topic
+        

@@ -20,6 +20,17 @@ async def register(
     user_data: UserRegister,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
+
+    # 1. Email bazada bormi yo‘qligini tekshirish
+    existing_user = await db.execute(
+        select(User).where(User.email == user_data.email)
+    )
+    if existing_user.scalar_one_or_none():
+        raise HTTPException(
+            status_code=400,
+            detail="Bu email allaqachon ro‘yxatdan o‘tgan",
+        )
+    
     user = User(
         email=user_data.email, hashed_password=hash_password(user_data.password)
     )
