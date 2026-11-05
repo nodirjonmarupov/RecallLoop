@@ -2,21 +2,26 @@ from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user
 from app.database.session import get_db
 from app.models import Topic, User
+from app.schemas.topic import TopicCreate
 
 router = APIRouter(prefix="/topics", tags=["Topics"])
 
-
 @router.post("/")
-async def create_topic(db: Annotated[AsyncSession, Depends(get_db)]):
-    result = await db.execute(select(User).where(User.email == "test@example.com"))
-    user = result.scalar_one()
-
-    topic = Topic(title="Python OOP", learned_at=date.today(), user=user)
+async def create_topic(
+    topic_data: TopicCreate,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    topic = Topic(
+        title=topic_data.title,
+        learned_at=date.today(),
+        user=current_user,
+    )
 
     db.add(topic)
     await db.commit()
