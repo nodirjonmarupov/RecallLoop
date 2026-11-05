@@ -1,9 +1,8 @@
 from datetime import date
 from typing import Annotated
 from uuid import UUID
-from fastapi import HTTPException
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -49,10 +48,10 @@ async def get_my_topics(
     return topics
 
 
-@router.get("/{topic_id}",response_model=TopicResponse)
+@router.get("/{topic_id}", response_model=TopicResponse)
 async def get_topic_id(
-    topic_id:UUID,
-    db:Annotated[AsyncSession,Depends(get_db)],
+    topic_id: UUID,
+    db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     result = await db.execute(
@@ -70,4 +69,3 @@ async def get_topic_id(
             detail="Topic not found",
         )
     return topic
-        
