@@ -37,7 +37,7 @@ async def create_topic(
     return topic
 
 
-@router.get("/", response_model=TopicResponse)
+@router.get("/", response_model=list[TopicResponse])
 async def get_my_topics(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
