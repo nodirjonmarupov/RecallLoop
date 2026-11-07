@@ -1,12 +1,6 @@
-from dataclasses import dataclass
 from datetime import date, timedelta
 
-
-@dataclass
-class Topic:
-    title: str
-    learned_at: date
-
+from app.models import Review, ReviewStatus, Topic
 
 REVIEW_INTERVALS = (1, 3, 7, 30)
 
@@ -56,4 +50,17 @@ def get_all_due_reviews(
 
 
 def get_today() -> date:
-    return date.today
+    return date.today()
+
+
+def create_review_objects(topic: Topic) -> list[Review]:
+    review_dates = build_review_schedule(topic.learned_at)
+
+    return [
+        Review(
+            topic=topic,
+            review_date=review_date,
+            status=ReviewStatus.PENDING,
+        )
+        for review_date in review_dates
+    ]

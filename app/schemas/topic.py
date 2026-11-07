@@ -14,3 +14,7 @@ class TopicResponse(BaseModel):
     learned_at: date
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TopicUpdate(BaseModel):
+    title: str | None = None
