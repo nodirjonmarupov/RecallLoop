@@ -99,4 +99,4 @@ def test_future_reviews_are_not_returned():
 def test_get_today():
     result = get_today()
 
-    assert result == date.today
+    assert result == date.today()
