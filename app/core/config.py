@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     database_url: str
     secret_key: str
     access_token_expire_minutes: int = 30
+    telegram_bot_token: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
