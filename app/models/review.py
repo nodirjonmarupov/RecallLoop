@@ -52,4 +52,4 @@ class Review(Base):
         DateTime(timezone=True), nullable=True
     )  # keyinchalik Telegram xabari yuborilgan vaqtni qayd etish uchun.
 
-    topic: Mapped["Topic"] = relationship(back_populates="review")
+    topic: Mapped["Topic"] = relationship(back_populates="reviews")
