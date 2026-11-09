@@ -42,6 +42,7 @@ async def main() -> None:
         id="daily_review_notifications",
         replace_existing=True,
     )
+    await check_due_reviews()
 
     scheduler.start()
     print("Review scheduler ishga tushdi")
