@@ -1,5 +1,5 @@
 from collections.abc import AsyncGenerator
-
+from sqlalchemy.pool import NullPool
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.engine import make_url
@@ -17,8 +17,10 @@ from app.main import app
 from app.models import User
 
 test_url = make_url(settings.database_url).set(database="recallloop_test")
-test_engine = create_async_engine(test_url)
-
+test_engine = create_async_engine(
+    test_url,
+    poolclass=NullPool,
+)
 TestSessionLocal = async_sessionmaker(
     bind=test_engine,
     expire_on_commit=False,

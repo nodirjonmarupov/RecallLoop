@@ -11,20 +11,21 @@ from app.api.deps import get_current_user
 from app.database.session import get_db
 from app.models import User
 
-router = APIRouter(prefix="/telegram", tags=["Telegram"])
+router = APIRouter(prefix="/telegram", tags=["Telegram"]) 
 
 class TelegramConnectResponse(BaseModel):
     code:str
     expires_in: int
 
+
 @router.post("/connect",response_model=TelegramConnectResponse)
 async def connect_telegram(
-     db: Annotated[AsyncSession, Depends(get_db)],
+    db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     alphabet = string.ascii_uppercase + string.digits
 
-    code= "RL"+"".join(
+    code= "RL-"+"".join(
         secrets.choice(alphabet) for _ in range(6)
     )
 
