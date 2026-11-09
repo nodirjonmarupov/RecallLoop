@@ -1,4 +1,3 @@
-
 import asyncio
 from datetime import UTC, datetime
 
@@ -26,9 +25,7 @@ async def check_due_reviews() -> None:
 
         due_reviews = result.scalars().all()
 
-        print(
-            f"Bugun yuborilishi kerak: {len(due_reviews)} ta review"
-        )
+        print(f"Bugun yuborilishi kerak: {len(due_reviews)} ta review")
 
 
 async def main() -> None:

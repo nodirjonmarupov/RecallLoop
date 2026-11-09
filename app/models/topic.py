@@ -43,4 +43,7 @@ class Topic(Base):
 
     user: Mapped["User"] = relationship(back_populates="topics")
 
-    reviews: Mapped[list["Review"]] = relationship(back_populates="topic", cascade="all, delete-orphan",)
+    reviews: Mapped[list["Review"]] = relationship(
+        back_populates="topic",
+        cascade="all, delete-orphan",
+    )

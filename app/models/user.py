@@ -37,7 +37,7 @@ class User(Base):
         nullable=False,
     )
 
-    telegram_chat_id:Mapped[str | None]=mapped_column(
+    telegram_chat_id: Mapped[str | None] = mapped_column(
         String(100),
         unique=True,
         nullable=True,
@@ -53,6 +53,5 @@ class User(Base):
         DateTime(timezone=True),
         nullable=True,
     )
-
 
     topics: Mapped[list["Topic"]] = relationship(back_populates="user")

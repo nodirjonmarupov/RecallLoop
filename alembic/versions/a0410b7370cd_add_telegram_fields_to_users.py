@@ -5,15 +5,16 @@ Revises: fb8710ac00cc
 Create Date: 2026-11-09 16:01:17.881937
 
 """
+
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'a0410b7370cd'
-down_revision: Union[str, Sequence[str], None] = 'fb8710ac00cc'
+revision: str = "a0410b7370cd"
+down_revision: Union[str, Sequence[str], None] = "fb8710ac00cc"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -46,6 +47,8 @@ def upgrade() -> None:
         "users",
         ["telegram_link_code"],
     )
+
+
 def downgrade() -> None:
     op.drop_constraint(
         "uq_users_telegram_link_code",

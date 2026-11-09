@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user
 from app.database.session import get_db
 from app.models import Review, ReviewStatus, Topic, User
-from app.schemas.review import ReviewResponse,ReviewHistoryResponse
+from app.schemas.review import ReviewHistoryResponse, ReviewResponse
 
 router = APIRouter(prefix="/reviews", tags=["Reviews"])
 
@@ -65,6 +65,7 @@ async def complete_review(
         await db.refresh(review)
 
     return review
+
 
 @router.get("/history", response_model=list[ReviewHistoryResponse])
 async def get_review_history(

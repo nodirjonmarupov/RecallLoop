@@ -25,8 +25,4 @@ async def send_telegram_message(chat_id: str, message: str) -> None:
                 "description",
                 "Unknown Telegram error",
             )
-            raise RuntimeError(
-                f"Telegram message failed: {error_description}"
-            )
-
-      
+            raise RuntimeError(f"Telegram message failed: {error_description}")

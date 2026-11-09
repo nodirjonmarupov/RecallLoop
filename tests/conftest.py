@@ -2,18 +2,19 @@ from collections.abc import AsyncGenerator
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.engine import make_url
+
 from app.api.deps import get_current_user
+from app.core.config import settings
 from app.database.base import Base
 from app.database.session import get_db
-from app.core.config import settings
 from app.main import app
-from app.models import User, Topic, Review
+from app.models import User
 
 test_url = make_url(settings.database_url).set(database="recallloop_test")
 test_engine = create_async_engine(test_url)
@@ -22,6 +23,7 @@ TestSessionLocal = async_sessionmaker(
     bind=test_engine,
     expire_on_commit=False,
 )
+
 
 @pytest_asyncio.fixture
 async def db_session() -> AsyncGenerator[AsyncSession, None]:
