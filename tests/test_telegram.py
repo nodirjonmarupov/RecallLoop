@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from app.models import User
+from app.core.config import settings
 
 
 @pytest.mark.asyncio
@@ -73,13 +74,17 @@ async def test_connect_telegram_replaces_old_code(
 
 
 @pytest.mark.asyncio
-async def test_telegram_webhook_connects_user(client, db_session, test_user):
+async def test_telegram_webhook_connects_user(client, db_session, test_user, monkeypatch,):
+    monkeypatch.setattr(
+        settings,
+        "telegram_webhook_secret",
+        "test-webhook-secret",
+    )
     test_user.telegram_link_code = "RL-ABC123"
     test_user.telegram_link_expires_at = (
         datetime.now(UTC) + timedelta(minutes=10)
     )
     await db_session.commit()
-
     response = await client.post(
         "/api/v1/telegram/webhook",
         json={
@@ -88,7 +93,12 @@ async def test_telegram_webhook_connects_user(client, db_session, test_user):
                 "text": "RL-ABC123",
             }
         },
+        headers={
+            "X-Telegram-Bot-Api-Secret-Token": "test-webhook-secret",
+        },
+        
     )
+    
 
     assert response.status_code == 200
     assert test_user.telegram_chat_id == "123456789"
@@ -153,6 +163,7 @@ async def test_telegram_webhook_rejects_expired_code(
 async def test_telegram_webhook_rejects_already_connected_chat(
     client, db_session, test_user
 ):
+
     another_user = User(
         email="another@example.com",
         hashed_password="test_password",
@@ -175,6 +186,7 @@ async def test_telegram_webhook_rejects_already_connected_chat(
                 "text": "RL-ABC123",
             }
         },
+        
     )
 
     assert response.status_code == 200
@@ -183,3 +195,5 @@ async def test_telegram_webhook_rejects_already_connected_chat(
     )
     assert test_user.telegram_chat_id is None
     assert test_user.telegram_link_code == "RL-ABC123"
+
+

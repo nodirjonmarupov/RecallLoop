@@ -3,13 +3,14 @@ import string
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.api.deps import get_current_user
 from app.database.session import get_db
 from app.models import User
+from app.core.config import settings
 
 from app.schemas.telegram import (
     TelegramConnectResponse,
@@ -23,7 +24,24 @@ router = APIRouter(prefix="/telegram", tags=["Telegram"])
 async def telegram_webhook(
     update: TelegramUpdate,
     db: Annotated[AsyncSession, Depends(get_db)],
+    secret_token:Annotated[
+        str |None,
+        Header(alias="X-Telegram-Bot-Api-Secret-Token")
+    ]=None,
 ):
+    if (
+        not settings.telegram_webhook_secret
+        or secret_token is None
+        or not secrets.compare_digest(
+            secret_token,
+            settings.telegram_webhook_secret,
+        )
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid webhook secret",
+        )
+    
     # 1. Kelgan xabarni tekshirish
     if update.message is None or update.message.text is None:
         return {"message": "Invalid message"}
