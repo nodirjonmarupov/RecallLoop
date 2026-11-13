@@ -109,8 +109,13 @@ async def test_telegram_webhook_connects_user(client, db_session, test_user, mon
 
 @pytest.mark.asyncio
 async def test_telegram_webhook_rejects_invalid_code(
-    client, db_session, test_user
+    client, db_session, test_user,monkeypatch,
 ):
+    monkeypatch.setattr(
+        settings,
+           "telegram_webhook_secret",
+            "test-webhook-secret",
+    )
     test_user.telegram_link_code = "RL-ABC123"
     test_user.telegram_link_expires_at = (
         datetime.now(UTC) + timedelta(minutes=10)
@@ -125,6 +130,9 @@ async def test_telegram_webhook_rejects_invalid_code(
                 "text": "RL-WRONG1",
             }
         },
+        headers={
+            "X-Telegram-Bot-Api-Secret-Token": "test-webhook-secret",
+        },
     )
 
     assert response.status_code == 200
@@ -135,8 +143,14 @@ async def test_telegram_webhook_rejects_invalid_code(
 
 @pytest.mark.asyncio
 async def test_telegram_webhook_rejects_expired_code(
-    client, db_session, test_user
+    client, db_session, test_user,monkeypatch,
 ):
+    monkeypatch.setattr(
+        settings,
+        "telegram_webhook_secret",
+        "test-webhook-secret",
+    )
+
     test_user.telegram_link_code = "RL-ABC123"
     test_user.telegram_link_expires_at = (
         datetime.now(UTC) - timedelta(minutes=1)
@@ -151,6 +165,10 @@ async def test_telegram_webhook_rejects_expired_code(
                 "text": "RL-ABC123",
             }
         },
+
+        headers={
+            "X-Telegram-Bot-Api-Secret-Token": "test-webhook-secret",
+        },
     )
 
     assert response.status_code == 200
@@ -161,8 +179,13 @@ async def test_telegram_webhook_rejects_expired_code(
 
 @pytest.mark.asyncio
 async def test_telegram_webhook_rejects_already_connected_chat(
-    client, db_session, test_user
+    client, db_session, test_user,monkeypatch
 ):
+    monkeypatch.setattr(
+        settings,
+        "telegram_webhook_secret",
+        "test-webhook-secret",
+    )
 
     another_user = User(
         email="another@example.com",
@@ -186,7 +209,10 @@ async def test_telegram_webhook_rejects_already_connected_chat(
                 "text": "RL-ABC123",
             }
         },
-        
+        headers={
+            "X-Telegram-Bot-Api-Secret-Token": "test-webhook-secret",
+        },
+                
     )
 
     assert response.status_code == 200
