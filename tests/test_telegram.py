@@ -222,4 +222,30 @@ async def test_telegram_webhook_rejects_already_connected_chat(
     assert test_user.telegram_chat_id is None
     assert test_user.telegram_link_code == "RL-ABC123"
 
+@pytest.mark.asyncio
+async def test_telegram_webhook_rejects_invalid_secret(
+    client,
+    monkeypatch,
+
+):
+    monkeypatch.setattr(
+        settings,
+        "telegram_webhook_secret",
+        "test-webhook-secret",
+    )
+    response=await client.post(
+        "/api/v1/telegram/webhook",
+        json={
+            "message": {
+                "chat": {"id": 123456789},
+                "text": "RL-ABC123",
+            }
+        },
+        headers={
+            "X-Telegram-Bot-Api-Secret-Token": "wrong-secret",
+        },
+    )
+
+    assert response.status_code == 403
+
 
